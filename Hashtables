@@ -1,0 +1,66 @@
+#include "stdafx.h"
+#include <iostream>
+#include <list>     
+#include <ctime>
+#include <string>
+using namespace std;
+
+class hash_table
+{
+	list<string> *tab;
+	int q;		//кол-во списков
+	int hash(string& s)
+	{
+		int indStr = 0;
+		int i;
+		for (i = 0; i < s.size(); i++)
+		{
+			indStr = (indStr * 31 + s[i]) % q;
+		}
+		return indStr;
+	}
+public:
+	hash_table(int q1)
+	{
+		q = q1;
+		tab = new list<string>[q];	//кол-во списков q
+	}
+
+	int add(string &s)
+	{
+		int i = hash(s);	//генерируем индекс строки в списке
+		if (tab[i].empty())
+		{
+			tab[i].push_back(s);
+			return 0;
+		}
+		int k = 0;
+		for (auto it = tab[i].begin(); it != tab[i].end(); it++)	//it-указатель на строку списка / проверяем, есть ли такая же строка в списке
+		{
+			k++;
+			if (s == *it) return k;		//если есть такая же строка, завершаем проверку
+		}
+		tab[i].push_back(s);
+		return k;
+	}
+};
+
+int main()
+{
+	srand(time(0));
+	string k;
+	int res = 0, N = 100000;	//N-кол-во строк в списке
+	hash_table t(99991);		//ко-во списков
+	for (int i = 0; i < N; i++)
+	{
+		k = "";
+		int j = rand() % 10 + 1;
+		for (int l = 0; l < j; l++)
+		{
+			k += 'a' + rand() % 26;
+		}
+		res += t.add(k);
+	}
+	cout << "Comps: " << res << endl;
+	return 0;
+}
