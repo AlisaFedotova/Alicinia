@@ -59,11 +59,9 @@ int main()
 		int RandLength = rand() % 10 + 1;	//случайная длина строки
 		for (int j = 0; j < RandLength; j++)
 			NewString += 'a' + rand() % 26;
-		//cout << i + 1 << ") " << NewString << endl;
 		res += MyTable.add(NewString);
 	}
 	
 	cout << "Comps: " << res << endl;
-	cin >> N;
 	return 0;
 }
