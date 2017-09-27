@@ -1,0 +1,69 @@
+#include "stdafx.h"
+#include <iostream>
+#include <list>     
+#include <ctime>
+#include <string>
+using namespace std;
+
+class hash_table
+{
+	list<string> *tab;
+	int NumberOfTab;		//кол-во списков (q)
+	int GenInd(string& s)
+	{
+		int indStr = 0;
+		for (int i = 0; i < s.size(); i++)
+		{
+			indStr = (indStr * 31 + s[i]) % NumberOfTab;
+		}
+		return indStr;
+	}
+public:
+	hash_table(int NumberOfTab1)
+	{
+		NumberOfTab = NumberOfTab1;
+		tab = new list<string>[NumberOfTab];	//список списков NumberOfTab
+	}
+
+	int add(string &s)
+	{
+		int i = GenInd(s);	//генерируем индекс строки в списке
+		if (tab[i].empty())	//если в tab[i] не содержится строки, кладем в нее строку
+		{
+			tab[i].push_back(s);
+			return 0;
+		}
+		int k = 0;
+		for (auto it = tab[i].begin(); it != tab[i].end(); it++)	//it-указатель на строку списка / проверяем, есть ли такая же строка в списке
+		{
+			k++;
+			if (s == *it) return k;		//если есть такая же строка, завершаем проверку
+		}
+		tab[i].push_back(s);
+		return k;
+	}
+};
+
+int main()
+{
+	srand(time(0));
+	string NewString;
+	int res = 0;
+	int N = 100;	//N-кол-во строк в списке
+	hash_table MyTable(91);		//ко-во списков
+
+	
+	for (int i = 0; i < N; i++)
+	{
+		NewString = "";
+		int RandLength = rand() % 20 + 1;	//случайная длина строки
+		for (int j = 0; j < RandLength; j++)
+			NewString += 'a' + rand() % 26;
+		//cout << i + 1 << ") " << NewString << endl;
+		res += MyTable.add(NewString);
+	}
+	
+	cout << "Comps: " << res << endl;
+	cin >> N;
+	return 0;
+}
