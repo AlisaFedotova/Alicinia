@@ -1,31 +1,36 @@
 import re
 import requests
 
-passPages = set()
-needEmails = set()
+siteUrl = 'http://www.csd.tsu.ru'
 
-siteUrl = 'http://www.tsu.ru'
+n = 3
+uniqEmails = set()
+uniqUrls = set()
 
-n = 100 
-uniqEmails = []
+def emailSearch(url, depth):
+	if depth <= n:
+		try:
+			request = requests.get(url)
+		except:
+			return
+		currEmails=re.findall(r'[a-z][\w]*[@][a-z][\w]*[\.][a-z][\w|.]*', request.text)
+		for em in currEmails:
+			uniqEmails.add(em)
 
-def emailSearch(depth):
-  currEmail=set(re.findall(r'[a-z][\w]*[@][a-z][\w]*[\.][a-z][\w|.]*')
-  for i in range(n):
-      if (currEmail!=uniqEmails[i]):
-        uniqEmails.append(currEmail)
-      elif uniqEmails[i]==currEmail:
-          i=i-1
-          break
-  needEmails.update(currEmail)
-  if depth>0:
-    absUrl=set(re.findall(r' <a href="(http?:\/\/[\w\/\.]*)">'))
-    relUrl=set(re.findall(r' <a href="([\"\']([^\"\']*)[\"\'])">'))
-    absUrl.update(siteUrl+x for x in relUrl)
-    for i in relUrl.difference(passPages):
-      emailSearch(i,depth-1)
+		absUrl=re.findall(r'href="(http?:\/\/[\w\/\.]*)"', request.text)
+		relUrl=re.findall(r'href=[\"\'](.*?)[\"\']', request.text)
+		for url in absUrl:
+			if url not in uniqUrls:
+				uniqUrls.add(url)
+				emailSearch(url, depth + 1)
 
-    
-emailSearch(1)
+		for url in relUrl:
+			if url not in uniqUrls:
+				uniqUrls.add(url)
+				emailSearch(url, depth + 1)
+
+
+
+emailSearch(siteUrl, 1)
 print('result: ')
 print(uniqEmails)
