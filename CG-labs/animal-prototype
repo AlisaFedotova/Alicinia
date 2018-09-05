@@ -1,0 +1,74 @@
+function Animal(name){
+    this.name = name;
+    this.canRun = true;
+    this.canSing = true;
+}
+
+Animal.prototype.run = function(canRun){
+    if(this.canRun) {
+        console.log(this.name + ' runs: ' + this.runSound);
+    }
+    else console.log(this.name + ': ');
+};
+
+Animal.prototype.sing = function(canSing){
+    if(this.canSing){
+        console.log(this.name + ' sings: ' + this.singSound);
+    }
+    else console.log(this.name + ': ');
+}
+
+
+function Dog(name, classification){
+    Animal.apply(this, arguments);
+    this.runSound = 'tygydyk tygydyk';
+    this.canSing = false;
+}
+
+function Bird(name, classification){
+    Animal.apply(this, arguments);
+    this.runSound = 'Top top top';
+    this.singSound = 'Tweet tweet tweet'
+}
+
+function Snake(name, classification) {
+    Animal.apply(this, arguments);
+    this.canRun = false;
+    this.canSing = false;
+}
+
+Dog.prototype = Object.create(Animal.prototype);
+Bird.prototype = Object.create(Animal.prototype);
+Snake.prototype = Object.create(Animal.prototype);
+
+Dog.prototype.run = function() {Animal.prototype.run.apply(this);};
+Bird.prototype.run = function() {Animal.prototype.run.apply(this);};
+Snake.prototype.run = function() {
+    Animal.prototype.run.apply(this);
+    console.log('"crawls"');
+};
+
+Dog.prototype.sing = function() {
+    Animal.prototype.sing.apply(this);
+    console.log('trying: Bark bark bark!')
+};
+Bird.prototype.sing = function() {Animal.prototype.sing.apply(this);};
+Snake.prototype.sing = function() {
+    Animal.prototype.sing.apply(this);
+    console.log('hisses that they abuse him');
+}
+
+
+
+
+var jack = new Dog('Jack', 'labrador');
+var eagle = new Bird('Eagle', 'canary');
+var sara = new Snake('Ssara', 'anaconda');
+
+jack.run();
+eagle.run();
+sara.run();
+
+jack.sing();
+eagle.sing();
+sara.sing();
